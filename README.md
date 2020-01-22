@@ -18,7 +18,7 @@ The enthalpy injection rate is the product of the flow rate, the fluid heat capa
 
 #### Sanity check
 
-The steady state pressure gradient can be calculated from Darcy's equation: $\nabla P$. \alpha
+The steady state pressure gradient can be calculated from Darcy's equation: $$\nabla P$$. \alpha
 
 ### Results and Interpretation
 
