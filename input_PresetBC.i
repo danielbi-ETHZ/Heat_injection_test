@@ -3,47 +3,8 @@ DT_MAX_TIME = 50.
 HEAT_ON_TIME = 100.
 HEAT_ON_TIME_DT = 100.01
 
-# [MeshGenerators]
-#   [./gmg]
-#     type = GeneratedMeshGenerator
-#     dim = 3
-#     nx = 20
-#     ny = 2
-#     nz = 20
-#     bias_x = 1.0
-#     xmin = 0.0
-#     xmax = 200.0
-#     ymin = 0.0
-#     ymax = 1.0
-#     bias_z = 1.0
-#     zmax = 200.0
-#     zmin = 0
-#   []
-#   [./createNewSidesetOne]
-#     type = SideSetsFromBoundingBoxGenerator
-#     input = gmg
-#     boundary_id_old = 'left' #says to look on the bottom boundary
-#     boundary_id_new = 10     #new boundary is assigned to 10
-#     bottom_left = '-0.1 -0.1 -1.1' #bounds of the new boundary
-#     top_right = '1000 1000 1000'     #bounds of the new boundary
-#     block_id = 0                #applied on block_id = 0 (i.e. the whole domain)
-#   []
-#   [./createNewSidesetTwo]
-#     type = SideSetsFromBoundingBoxGenerator
-#     input = createNewSidesetOne
-#     boundary_id_old = 'right'
-#     boundary_id_new = 11
-#     bottom_left = '-0.1 -0.1 -0.1' #bounds of the new boundary
-#     top_right = '1000 1000 1000'     #bounds of the new boundary
-#     block_id = 0
-#   []
-# []
-
 [Mesh]
-  file = input_initialization_out.e
-  # type = MeshGeneratorMesh
-  # boundary_id = '10 11'
-  # boundary_name = 'injectionBC productionBC'
+  file = input_initialization_out.e # reads initialization mesh.
 []
 
 [GlobalParams]
@@ -53,32 +14,26 @@ HEAT_ON_TIME_DT = 100.01
 
 [Variables]
   [./temp]
-    # initial_condition = 0
     scaling = 1.E-1
-    initial_from_file_var = temp
+    initial_from_file_var = temp #reads temp from initialization
     initial_from_file_timestep = LATEST
   [../]
   [./pp]
-    initial_from_file_var = pp
+    initial_from_file_var = pp #reads pressure from initialization
     initial_from_file_timestep = LATEST
-    # scaling = 1e7
-    # initial_condition = 0.0
   [../]
 []
 
 [Functions]
   [./heat_BC_func]
     type = PiecewiseConstant
-    x = '0. ${ENDING_TIME}'
-    y = '1.0  1.0'
-    # x = '0 100   200 1e8' # x actls like time
-    # y = '0 -1e-6 -1e-6   -1e-6'  # y acts like the amount of tracer at the inlet
+    x = '0. ${ENDING_TIME}' # x acts like time
+    y = '1.0  1.0' # y is the temperature at the inlet
     direction = left
   [../]
 []
 
 [BCs]
-  ##### For use_mobility = false
   [./injection]
     type = PorousFlowSink
     variable = pp
@@ -88,6 +43,14 @@ HEAT_ON_TIME_DT = 100.01
     use_mobility = false
     save_in = fluxes_in
   [../]
+
+  ## The two options below (injeciton_heat_function and injection_heat) are identical. Either is fine.
+  [./injection_heat_function]
+   type = FunctionDirichletBC
+   variable = temp
+   boundary =left
+   function = heat_BC_func
+  [../]
   # [./injection_heat]
   #   type = PresetBC
   #   variable = temp
@@ -95,14 +58,7 @@ HEAT_ON_TIME_DT = 100.01
   #   value = 1.
   #   save_in = heat_fluxes_in
   # [../]
-  [./injection_heat_function]
-   type = FunctionDirichletBC
-   variable = temp
-   boundary =left
-   # fluid_phase = 0 #Not used
-   # value = 393.15
-   function = heat_BC_func
-  [../]
+
   [./production]
     type = PorousFlowSink
     variable = pp
@@ -123,29 +79,6 @@ HEAT_ON_TIME_DT = 100.01
     save_in = heat_fluxes_out
   [../]
 []
-
-# [Adaptivity]
-#  marker = errorfrac
-#  steps = 2
-#  max_h_level = 2
-#  [./Indicators]
-#    [./error]
-#      type = GradientJumpIndicator
-#      variable = pp
-#      # variable = temp
-#      outputs = none
-#    [../]
-#  [../]
-#  [./Markers]
-#    [./errorfrac]
-#      type = ErrorFractionMarker
-#      refine = 0.5  #Refines the elements that contribut the top 50% of error.
-#      coarsen = 0.1 #this would coarsen the elements that contribute only 10% of the error, but wont coarsen past original size
-#      indicator = error
-#      outputs = none
-#    [../]
-#  [../]
-# []
 
 [Kernels]
   [./mass0]
@@ -175,7 +108,6 @@ HEAT_ON_TIME_DT = 100.01
 [UserObjects]
   [./dictator]
     type = PorousFlowDictator
-    # porous_flow_vars = 'pp'
     porous_flow_vars = 'pp temp'
     number_fluid_phases = 1
     number_fluid_components = 1
@@ -188,7 +120,6 @@ HEAT_ON_TIME_DT = 100.01
       type = SimpleFluidProperties
       bulk_modulus = 2.0E9
       density0 = 1000.0
-      #density0 = 1.
       thermal_expansion = 0.0
       viscosity = 1.0
       cv = 4.2e3
@@ -247,7 +178,6 @@ HEAT_ON_TIME_DT = 100.01
   [../]
 []
 
-
 [AuxVariables]
   [./fluxes_out]
   [../]
@@ -301,12 +231,10 @@ HEAT_ON_TIME_DT = 100.01
     variable = darcy_x
     gravity = '0 0 0'
     component = x
-    #block = 'EnhPerm'
   [../]
   [./darcy_y]
     type = PorousFlowDarcyVelocityComponent
     variable = darcy_y
-    #gravity = '0 0 -10E-6'
     gravity = '0 0 0'
     component = y
   [../]
@@ -394,7 +322,6 @@ HEAT_ON_TIME_DT = 100.01
   solve_type = NEWTON
   start_time = 0.0
   end_time = '${ENDING_TIME}'
-  # dt = 2.e5
   dtmax = '${DT_MAX_TIME}'
   dtmin = 0.1
  [./TimeStepper]

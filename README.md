@@ -1,6 +1,6 @@
 ### Overview
 
-This repository compares two approaches to injecting fluid at a fixed flow rate and temperature in MOOSE's PorousFlow Thermo-hydro simulations. The first approach fixes the temperature at the inlet using a PresetBC, DirichletBC, or FunctionDirichletBC, while the second approach injects an amount of enthalpy based on the inlet fluid temperature using a PorousFlowSink BC.
+This repository compares two approaches to injecting fluid at a fixed flow rate and temperature in MOOSE's PorousFlow Thermo-hydro simulations. The first approach fixes the temperature at the inlet using a DirichletBC, while the second approach injects an amount of enthalpy based on the inlet fluid temperature using a PorousFlowSink BC.
 
 ### Details
 
@@ -11,11 +11,13 @@ The domain is initially at zero degrees and has a BCs that encourage a flow of 4
     type = PorousFlowSink
     variable = pp
     boundary = right
-    flux_function = 200
+    flux_function = 200 ## extraction of fluid at 200 kg/m2/s
     fluid_phase = 0
     use_mobility = false
     save_in = fluxes_out
   [../]
+  #Note that production_heat is identical to production at outflow boundary
+  #except that variable = temp and use_enthalpy = true
   [./production_heat]
     type = PorousFlowSink
     variable = temp
@@ -52,6 +54,8 @@ The enthalpy injection rate is the product of the flow rate, the fluid heat capa
 ```
 
 ### Results and Interpretation
+
+The 
 
 ![Tux, the Linux mascot](Heat_BC_comparison.png)
 
