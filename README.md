@@ -20,6 +20,11 @@ The enthalpy injection rate is the product of the flow rate, the fluid heat capa
 
 The steady state pressure gradient can be calculated from Darcy's equation: $$\nabla P$$. \alpha
 
+
+You can use $$\LaTeX$$ to typeset formulas. A formula can be displayed inline, e.g. $$e=mc^2$$, or as a block:
+$$\int_\Omega \nabla u \cdot \nabla v~dx = \int_\Omega fv~dx$$
+Also check out this [LaTeX introduction](https://en.wikibooks.org/wiki/LaTeX/Mathematics).
+
 ### Results and Interpretation
 
 ![Tux, the Linux mascot](Heat_BC_comparison.png)
