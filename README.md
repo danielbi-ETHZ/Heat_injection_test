@@ -4,7 +4,7 @@ This repository compares two approaches to injecting fluid at a fixed flow rate 
 
 ### Details
 
-The domain is initially at zero degrees and has a BCs that encourage a flow of 40000 kg/s, or 40 m3/s across it (which is accomplished in *input\_initialization.i*). After the initialization period, the inlet temperature is raised in one of two ways: (a) the temperature at the boundary is raised to 1 degree (*input\_PresetBC.i*) (b) or the enthalpy that is associated with 40000 kg/s at 1 degree is injected (*input\_PFSink.i*). The outflow boundary produces fluid at 40000 kg/s and the correct amount of enthalpy based on the local temperature. This is achieved by having very similar *PorousFlowSink* cards at the outlet for temperature and pressure. The only difference are the variable names and that *use\_enthalpy* is included for the temperature condition.
+The domain is initially at zero degrees and has a BCs that encourage a flow of 40000 kg/s, or 40 m3/s, across it (which is accomplished in *input\_initialization.i*). After the initialization period, the inlet temperature is raised in one of two ways: (a) the temperature at the boundary is raised to 1 degree (*input\_PresetBC.i*) or (b) the relevant enthalpy injection rate is specified (i.e. the enthalpy from 40000 kg/s at 1 degree, in *input\_PFSink.i*). The outflow boundary produces fluid at 40000 kg/s and allows temperature to leave with the fluid. This is achieved by having very similar *PorousFlowSink* cards at the outlet for temperature and pressure. The only difference are the variable names (temp instead of pp) and that *use\_enthalpy* is included for the temperature condition.
 
 ```
   [./production]
@@ -55,7 +55,7 @@ The enthalpy injection rate is the product of the flow rate, the fluid heat capa
 
 ### Results and Interpretation
 
-The 
+The figure below shows temperature versus distance along the flow path, x. 
 
 ![Tux, the Linux mascot](Heat_BC_comparison.png)
 
