@@ -4,7 +4,29 @@ This repository compares two approaches to injecting fluid at a fixed flow rate 
 
 ### Details
 
-The domain is initially at zero degrees and has a BCs that encourage a flow of 40000 kg/s, or 40 m3/s across it (which is accomplished in *input\_initialization.i*). After the initialization period, the inlet temperature is raised in one of two ways: (a) the temperature at the boundary is raised to 1 degree (*input\_PresetBC.i*) or the enthalpy that is associated with 40000 kg/s at 1 degree is injected (*input\_PFSink.i*).
+The domain is initially at zero degrees and has a BCs that encourage a flow of 40000 kg/s, or 40 m3/s across it (which is accomplished in *input\_initialization.i*). After the initialization period, the inlet temperature is raised in one of two ways: (a) the temperature at the boundary is raised to 1 degree (*input\_PresetBC.i*) (b) or the enthalpy that is associated with 40000 kg/s at 1 degree is injected (*input\_PFSink.i*). The outflow boundary produces fluid at 40000 kg/s and the correct amount of enthalpy based on the local temperature. This is achieved by having very similar *PorousFlowSink* cards at the outlet for temperature and pressure. The only difference are the variable names and that *use\_enthalpy* is included for the temperature condition.
+
+```
+  [./production]
+    type = PorousFlowSink
+    variable = pp
+    boundary = right
+    flux_function = 200
+    fluid_phase = 0
+    use_mobility = false
+    save_in = fluxes_out
+  [../]
+  [./production_heat]
+    type = PorousFlowSink
+    variable = temp
+    boundary = right
+    flux_function = 200
+    fluid_phase = 0
+    use_mobility = false
+    use_enthalpy = true
+    save_in = heat_fluxes_out
+  [../]
+```
 
 #### Parameters 
 
@@ -21,13 +43,12 @@ The enthalpy injection rate is the product of the flow rate, the fluid heat capa
     type = PorousFlowSink
     variable = temp
     boundary = left
-    flux_function = -840000.
+    flux_function = -840000. #This is the amount of enthalpy calculated a priori
     fluid_phase = 0
     use_mobility = false
-    use_enthalpy = false
+    use_enthalpy = false #NOTE this is false since a priori calculation was already done for flux_function
     save_in = heat_fluxes_in
   [../]
-
 ```
 
 ### Results and Interpretation
