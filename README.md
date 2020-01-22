@@ -55,7 +55,11 @@ The enthalpy injection rate is the product of the flow rate, the fluid heat capa
 
 ### Results and Interpretation
 
-The figure below shows temperature versus distance along the flow path, x. 
+The figure below shows temperature versus distance along the flow path, x. Results are shown at t = 1, 10, 100, and 350 seconds. The solid lines are the results when an enthalpy injection rate is specified (with PorousFlowSink), and the dotted lines are results when the temperature is directly specified (with PresetBC). 
+At early times, the enthalpy injection approach has to heat up the element at the injection. By t = 100, the temperature at the inlet is approximately 1 degree C. 
+On the other hand, when the temperature at the inlet is fixed to 1 degree, the temperature gradient is very large at the inlet, essentially providing an unrealistically large amount of energy at early times.
+By the time the simulation has reached later times (t >=350 s), the differences between the two approaches are minor.
+It is likely that the enthalpy specification is more accurate than the fixed temperature BC, but the differences may be inconsequential depending on specifics of the problem (mesh size, time scale, length scale, material properties, etc.).
 
 ![Tux, the Linux mascot](Heat_BC_comparison.png)
 
